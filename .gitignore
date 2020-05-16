@@ -8,3 +8,4 @@
 *-pc
 apt-cacher-ng/
 *.config
+.jjb.ini

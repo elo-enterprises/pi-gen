@@ -58,6 +58,8 @@ DEPLOY_DIR:=${SRC_ROOT}/deploy
 # SD_CARD:=/dev/disk2
 # export SD_CARD
 export PI_GEN_REPO="https://github.com/elo-enterprises/pi-gen"
+jenkins-jobs:
+	jenkins-jobs -l DEBUG --conf .jjb.ini update .jenkins.job.seed.yml
 
 configure:
 	echo "IMG_NAME=iot-`git rev-parse HEAD| cut -c1-5`" > ${CONFIG_FILE}
