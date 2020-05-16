@@ -52,17 +52,21 @@ export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 # 	$(call _announce_assert, $@, ${${*}})
 # 	$(call _assert_var, $*)
 
-DEPLOY_DIR:=deploy
-SD_CARD:=/dev/disk2
-export SD_CARD
+CONFIG_FILE:=pi.config
+DEPLOY_DIR:=${SRC_ROOT}/deploy
+# export DEPLOY_IMAGE=${DEPLOY_DIR}/...img
+# SD_CARD:=/dev/disk2
+# export SD_CARD
 export PI_GEN_REPO="https://github.com/elo-enterprises/pi-gen"
-export DEPLOY_IMAGE:=${DEPLOY_DIR}/2019-11-29-elo-lite.img
+
+configure:
+	echo "IMG_NAME=iot-`git rev-parse HEAD| cut -c1-5`" > ${CONFIG_FILE}
 
 build:
-	PRESERVE_CONTAINER=1 CONTINUE=1 bash -x ./build-docker.sh -c elo.config
+	PRESERVE_CONTAINER=1 CONTINUE=1 bash -x ./build-docker.sh -c ${CONFIG_FILE}
 
 clean:
-	rm -rf ${SRC_ROOT}/${DEPLOY_DIR}/
+	rm -rf /${DEPLOY_DIR}/
 
 describe-artifacts:
 	@printf "\n\n------------ BUILD ARTIFACTS (under '${DEPLOY_DIR}') ------------\n\n"

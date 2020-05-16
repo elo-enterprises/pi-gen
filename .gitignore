@@ -7,3 +7,4 @@
 .pc
 *-pc
 apt-cacher-ng/
+*.config

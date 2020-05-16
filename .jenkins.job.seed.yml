@@ -50,7 +50,7 @@
                 submoduleCfg: [],
                 userRemoteConfigs: [[
                   url: "${{params.REPO}}",
-                  // NB: uncomment/configure if your github ssh keys are not 
+                  // NB: uncomment/configure if your github ssh keys are not
                   // setup & you prefer to use the jenkins credentials database
                   //credentialsId: "github",
                 ] ],
@@ -60,7 +60,8 @@
           steps {{ ansiColor('xterm') {{
             sshagent([]) {{
               sh("""
-              IMG_NAME=iot.elo.enterprises make build
+              make clean configure
+              make build
               """)
             }}
         }} }} }} // ansiColor // steps // stage
