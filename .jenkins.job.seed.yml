@@ -1,4 +1,6 @@
 
+
+
 - job-template:
     name: 'pi-gen'
     project-type: pipeline
@@ -15,7 +17,7 @@
           xml: |
             <org.jenkinsci.plugins.workflow.job.properties.DisableResumeJobProperty/>
     description: |-
-        https://github.com/elo-enterprises/pi-gen/
+        Build for https://github.com/elo-enterprises/pi-gen/
     parameters:
       - string:
           name: BRANCH
@@ -24,16 +26,17 @@
       - string:
           name: REPO
           description: Repo to use
-          default: git@github.com:elo-enterprises/pi-gen.git
+          default: 'git@github.com:elo-enterprises/pi-gen.git'
           # default: https://github.com/elo-enterprises/pi-gen.git
     dsl: |
       // library identifier: "jenkins-libs", changelog: false
-      pipeline {{ agent any;  stages {{
+      pipeline {{
+      agent any;  stages {{
         stage("INIT") {{ steps{{ script {{
             step([$class: 'WsCleanup']);
               checkout([
                 $class: 'GitSCM',
-                branches: [[name: "${{BRANCH}}"]],
+                branches: [[name: "${{params.BRANCH}}"]],
                 doGenerateSubmoduleConfigurations: false,
                 extensions: [
                   [ $class: 'RelativeTargetDirectory',
@@ -45,18 +48,34 @@
                     reference: '',
                     trackingSubmodules: false ] ],
                 submoduleCfg: [],
-                //userRemoteConfigs: [[ url: "${{REPO}}", credentialsId: "default", ] ],
+                userRemoteConfigs: [[
+                  url: "${{params.REPO}}",
+                  // NB: uncomment/configure if your github ssh keys are not 
+                  // setup & you prefer to use the jenkins credentials database
+                  //credentialsId: "github",
+                ] ],
               ]);
         }} }} }} // script // steps // stage
         stage("Toggle") {{
           steps {{ ansiColor('xterm') {{
             sshagent([]) {{
-              sh("echo hello world")
+              sh("""
+              IMG_NAME=iot.elo.enterprises make build
+              """)
             }}
         }} }} }} // ansiColor // steps // stage
       }} }} // stages // pipeline
-
-
+    # triggers:
+    #   - pollscm:
+    #       cron: "H/2 * * * *"
+    #       ignore-post-commit-hooks: True
+    # pipeline-scm:
+    #   scm:
+    #     - git:
+    #         url: "{repo}"
+    #         refspec: +refs/heads/*:refs/remotes/origin/*
+    #         credentials-id: "{default}"
+    #         branches: ['origin/**']
 - project:
     name: pi-gen-project
     jobs: ['pi-gen']
