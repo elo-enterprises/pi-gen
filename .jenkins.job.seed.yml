@@ -31,7 +31,7 @@ s- job-template:
             step([$class: 'WsCleanup']);
               checkout([
                 $class: 'GitSCM',
-                branches: [[name: "${BRANCH}"]],
+                branches: [[name: "${{BRANCH}}"]],
                 doGenerateSubmoduleConfigurations: false,
                 extensions: [
                   [ $class: 'RelativeTargetDirectory',
@@ -44,7 +44,7 @@ s- job-template:
                     trackingSubmodules: false ] ],
                 submoduleCfg: [],
                 userRemoteConfigs: [
-                  [ url: "${REPO}", credentialsId: "default", ] ],
+                  [ url: "${{REPO}}", credentialsId: "default", ] ],
               ]);
         }} }} }} // script // steps // stage
         stage("Toggle") {{
