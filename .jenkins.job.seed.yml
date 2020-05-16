@@ -1,0 +1,60 @@
+- job-template:
+    name: 'pi-gen'
+    project-type: pipeline
+    sandbox: false
+    disabled: false
+    concurrent: false
+    properties:
+      - build-discarder:
+          num-to-keep: 3
+      - rebuild:
+          auto-rebuild: true
+          rebuild-disabled: false
+      - raw:
+          xml: |
+            <org.jenkinsci.plugins.workflow.job.properties.DisableResumeJobProperty/>
+    description: |-
+        https://github.com/elo-enterprises/pi-gen/
+    parameters:
+      - string:
+          name: BRANCH
+          description: Branch to use
+          default: master
+      - string:
+          name: REPO
+          description: Repo to use
+          default: git@github.com:elo-enterprises/pi-gen.git
+    dsl: |
+      // library identifier: "jenkins-libs", changelog: false
+      pipeline {{ agent any;  stages {{
+        stage("INIT") {{ steps{{ script {{
+            step([$class: 'WsCleanup']);
+              checkout([
+                $class: 'GitSCM',
+                branches: [[name: "$${BRANCH}"]],
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [
+                  [ $class: 'RelativeTargetDirectory',
+                    relativeTargetDir: "." ],
+                  [ $class: 'SubmoduleOption',
+                    disableSubmodules: false,
+                    parentCredentials: false,
+                    recursiveSubmodules: recursive,
+                    reference: '',
+                    trackingSubmodules: false ] ],
+                submoduleCfg: [],
+                userRemoteConfigs: [
+                  [ url: "$${REPO}", credentialsId: "default", ] ],
+              ]);
+        }} }} }} // script // steps // stage
+        stage("Toggle") {{
+          steps {{ ansiColor('xterm') {{
+            sshagent([]) {{
+              sh("echo hello world")
+            }}
+        }} }} }} // ansiColor // steps // stage
+      }} }} // stages // pipeline
+
+- project:
+    name: pi-gen-project
+    jobs: ['pi-gen']
