@@ -1,4 +1,5 @@
-s- job-template:
+
+- job-template:
     name: 'pi-gen'
     project-type: pipeline
     sandbox: false
@@ -24,6 +25,7 @@ s- job-template:
           name: REPO
           description: Repo to use
           default: git@github.com:elo-enterprises/pi-gen.git
+          # default: https://github.com/elo-enterprises/pi-gen.git
     dsl: |
       // library identifier: "jenkins-libs", changelog: false
       pipeline {{ agent any;  stages {{
@@ -39,12 +41,11 @@ s- job-template:
                   [ $class: 'SubmoduleOption',
                     disableSubmodules: false,
                     parentCredentials: false,
-                    recursiveSubmodules: recursive,
+                    recursiveSubmodules: true,
                     reference: '',
                     trackingSubmodules: false ] ],
                 submoduleCfg: [],
-                userRemoteConfigs: [
-                  [ url: "${{REPO}}", credentialsId: "default", ] ],
+                //userRemoteConfigs: [[ url: "${{REPO}}", credentialsId: "default", ] ],
               ]);
         }} }} }} // script // steps // stage
         stage("Toggle") {{
@@ -54,6 +55,7 @@ s- job-template:
             }}
         }} }} }} // ansiColor // steps // stage
       }} }} // stages // pipeline
+
 
 - project:
     name: pi-gen-project
