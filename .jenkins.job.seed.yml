@@ -1,4 +1,4 @@
-- job-template:
+s- job-template:
     name: 'pi-gen'
     project-type: pipeline
     sandbox: false
@@ -31,7 +31,7 @@
             step([$class: 'WsCleanup']);
               checkout([
                 $class: 'GitSCM',
-                branches: [[name: "$${BRANCH}"]],
+                branches: [[name: "${BRANCH}"]],
                 doGenerateSubmoduleConfigurations: false,
                 extensions: [
                   [ $class: 'RelativeTargetDirectory',
@@ -44,7 +44,7 @@
                     trackingSubmodules: false ] ],
                 submoduleCfg: [],
                 userRemoteConfigs: [
-                  [ url: "$${REPO}", credentialsId: "default", ] ],
+                  [ url: "${REPO}", credentialsId: "default", ] ],
               ]);
         }} }} }} // script // steps // stage
         stage("Toggle") {{
